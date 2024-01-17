@@ -1,72 +1,38 @@
-class Materiel:
-    pass
+from datetime import date
 
+from flask_sqlalchemy import SQLAlchemy
 
-class Corde(Materiel):
-    def __init__(
-        self,
-        modele,
-        fabricant,
-        serie,
-        longueur,
-        couleur,
-        type,
-        description,
-        dfabrication,
-        dachat,
-        dfvie,
-        dutilisation,
-    ):
-        self._id = None
-        self._modele = modele
-        self._fabricant = fabricant
-        self._serie = serie
-        self._longueur = longueur
-        self._couleur = couleur
-        self._type = type
-        self._description = description
-        self._dfabrication = dfabrication
-        self._dachat = dachat
-        self._dfvie = dfvie
-        self._dutilisation = dutilisation
+db = SQLAlchemy()
 
-    def register_on(self, cursor):
-        values = (
-            self._modele,
-            self._fabricant,
-            self._serie,
-            self._longueur,
-            self._couleur,
-            self._type,
-            self._description,
-            self._dfabrication.isoformat(),
-            self._dachat.isoformat(),
-            self._dfvie.isoformat(),
-            self._dutilisation.isoformat(),
-        )
+class Cordes(db.Model):
+    __tablename__ = "Cordes"
+    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
+    modele = db.Column(db.String(30))
+    fabricant = db.Column(db.String(30))
+    longueur = db.Column(db.Integer)
+    couleur = db.Column(db.String(30))
+    utilisation = db.Column(db.String(20))
+    description = db.Column(db.String(50))
+    date_fabrication = db.Column(db.Date)
+    date_fabrication = db.Column(db.Date)
+    date_achat = db.Column(db.Date)
+    date_fin_vie = db.Column(db.Date)
+    date_utilisation = db.Column(db.DATE)
 
-        cursor.execute(
-            """
-          INSERT INTO Cordes (
-            c_modele,
-            c_fabricant,
-            c_serie,
-            c_longueur,
-            c_couleur,
-            c_type,
-            c_description,
-            c_dfabrication,
-            c_dachat,
-            c_dfvie,
-            c_dutilisation)
-          VALUES(?,?,?,?,?,?,?,?,?,?,?)""",
-            values,
-        )
-
-
-class Controle:
-    pass
-
-
-class ControleCordes(Controle):
-    pass
+class ControlesCordes(db.Model):
+    __tablename__ = "ControlesCordes"
+    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
+    corde_id = db.Column(db.Integer, db.ForeignKey('Cordes.id'), nullable=False)
+    corde = db.relationship('Cordes', backref=db.backref('ControlesCordes', lazy=True))
+    """
+CREATE TABLE ControlesCordes (
+  cc_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  c_id INTEGER REFERENCES Cordes,
+  cc_date DATE,
+  cc_remarques TEXT,
+  cc_usure VARCHAR(20),
+  cc_brulures VARCHAR(20),
+  cc_coupures VARCHAR(20),
+  cc_peluche VARCHAR(20),
+  cc_ame VARCHAR(20)
+    """

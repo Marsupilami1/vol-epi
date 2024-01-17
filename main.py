@@ -1,31 +1,19 @@
-#!/usr/bin/env python3
-
-import sqlite3
-import os
-from datetime import date
+from flask import Flask
 
 import models
+from models import db
 
-database_path = os.path.abspath("./vol-maintenance.db")
+import sys
 
-connection = sqlite3.connect(database_path)
-cursor = connection.cursor()
 
-corde = models.Corde(
-    "zenith",
-    "beal",
-    "xab789",
-    80,
-    "rose",
-    "simple",
-    "Lot de deux cordes",
-    date.today(),
-    date.today(),
-    date.today(),
-    date.today(),
-)
+app = Flask(__name__)
+app.config.from_object('config')
+db.init_app(app)
 
-corde.register_on(cursor)
-connection.commit()
-connection.close()
+if sys.argv[1] == "create-database":
+    with app.app_context():
+        db.create_all()
+    exit(0)
 
+if __name__ == "__main__":
+    app.run()
