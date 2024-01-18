@@ -1,0 +1,31 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}Ajout de corde{% endblock %}
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col s12 m6 l3">
+			<a href="/ajout" class="waves-effect waves-light btn light-blue darken-2">
+				<i class="material-icons left">arrow_back</i>Retour</a>
+		</div>
+	</div>
+	<div class="center addbox">
+		<h3>Informations</h3>
+		{% from "pages/_formhelpers.html" import render_field %}
+		<form method=post>
+			<dl>
+				{{ render_field(form.fabricant) }}
+				{{ render_field(form.modele) }}
+				{{ render_field(form.serie) }}
+				{{ render_field(form.longueur) }}
+				{{ render_field(form.couleur) }}
+				{{ render_field(form.utilisation) }}
+				{{ render_field(form.description) }}
+				{{ render_field(form.date_utilisation) }}
+				{{ render_field(form.date_fin_vie) }}
+			</dl>
+			<p><input type=submit value="Ajouter" class="btn-large light-blue darken-2"></p>
+		</form>
+	</div>
+</div>
+{% endblock %}
