@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, abort
 from flask_socketio import SocketIO
-from datetime import date, timedelta
+from datetime import date
+import os
 
 from models import EPI, Genre, Stockage, Controle, Rebut
 from models import db
@@ -20,6 +21,9 @@ socketio = SocketIO(app)
 # Create the database if asked to do so.
 # --------------------------------------------#
 if len(sys.argv) >= 2 and sys.argv[1] == "create-database":
+    if os.path.exists("./database.db"):
+        print("The database exists, please remove it before you create a new one.")
+        exit(1)
     with app.app_context():
         db.create_all()
         print("[INFO] Database created.")
@@ -82,7 +86,7 @@ def ajout():
         )
         db.session.add(controle)
         db.session.commit()
-        return redirect("/")
+        return redirect(f"/epi/{epi.epi_id}")
     return render_template("pages/ajout.html", form=form)
 
 
@@ -95,22 +99,19 @@ def recherche_genre():
             fin_de_vie = None
             urgence = "all good"
             if epi.epi_duree_vie != None:
-                fin_de_vie = epi.epi_date_utilisation + timedelta(
-                    days=365 * epi.epi_duree_vie
-                )
-                if fin_de_vie.year - date.today().year <= 2:
+                fin_de_vie = epi.epi_date_utilisation.year + epi.epi_duree_vie
+                if fin_de_vie - date.today().year <= 2:
                     urgence = "worrying"
-                if fin_de_vie.year - date.today().year <= 1:
+                if fin_de_vie - date.today().year <= 1:
                     urgence = "critical"
-                fin_de_vie = fin_de_vie.strftime("%Y")
             epis.append(
                 {
                     "id": epi.epi_id,
-                    "type": epi.epi_type,
+                    "type": epi.epi_type.capitalize(),
                     "marque": epi.epi_marque,
                     "modele": epi.epi_modele,
                     "count": epi.epi_quantite,
-                    "marquage": epi.epi_marquage,
+                    "marquage": epi.epi_marquage.capitalize(),
                     "stockage": epi.epi_stockage.sto_name,
                     "fin_de_vie": fin_de_vie,
                     "urgence": urgence,
@@ -124,6 +125,36 @@ def recherche_genre():
         )
     return render_template("pages/recherche_genre.html", data_by_genre=data)
 
+@app.route("/recherche/stockage")
+def recherche_stockage():
+    data = []
+    for stockage in Stockage.query.all():
+        epis = []
+        for epi in EPI.query.filter(EPI.epi_stockage == stockage):
+            fin_de_vie = None
+            urgence = "all good"
+            if epi.epi_duree_vie != None:
+                fin_de_vie = epi.epi_date_utilisation.year + epi.epi_duree_vie
+                if fin_de_vie - date.today().year <= 2:
+                    urgence = "worrying"
+                if fin_de_vie - date.today().year <= 1:
+                    urgence = "critical"
+            epis.append({
+                    "genre": epi.epi_genre.gen_name,
+                    "id": epi.epi_id,
+                    "type": epi.epi_type.capitalize(),
+                    "marque": epi.epi_marque,
+                    "modele": epi.epi_modele,
+                    "count": epi.epi_quantite,
+                    "marquage": epi.epi_marquage.capitalize(),
+                    "fin_de_vie": fin_de_vie,
+                    "urgence": urgence,
+                })
+        data.append({
+                "stockage": stockage.sto_name,
+                "epis": epis,
+            })
+    return render_template("pages/recherche_stockage.html", data_by_stockage=data)
 
 @app.route("/epi/<int:epi_id>", methods=["GET", "POST"])
 def epi(epi_id):
@@ -133,6 +164,7 @@ def epi(epi_id):
     - Stockage: visiter et déplacer
     - Contrôles: liste, ajouter et mettre au rebut
     """
+    form = forms.Deplacement(request.form)
     if request.method == "POST":
         if "rebut" in request.form.keys():
             rebut = Rebut(
@@ -148,6 +180,11 @@ def epi(epi_id):
             )
             db.session.add(controle)
             db.session.commit()
+        elif form.validate():
+            epi = EPI.query.get({"epi_id": epi_id})
+            epi.epi_stockage = form.stockage.data
+            db.session.commit()
+
         return redirect(f"/epi/{epi_id}")
 
     epi = EPI.query.get({"epi_id": epi_id})
@@ -160,7 +197,7 @@ def epi(epi_id):
     # CONTROLES
     controles = []
     for controle in Controle.query.where(Controle.con_epi_id == epi_id):
-        controles.append({"date": controle.con_date})
+        controles.append({"date": controle.con_date.strftime("%m/%Y")})
 
     return render_template(
         "pages/epi.html",
@@ -172,8 +209,8 @@ def epi(epi_id):
         has_rebut_date=dernier_rebut is not None,
         rebut_date=dernier_rebut,
         controles=controles,
+        form=form,
     )
-
 
 # -------------------------------------------#
 # Launch.

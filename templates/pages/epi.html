@@ -1,6 +1,6 @@
 {% extends 'pages/base.html' %}
 
-{% block title %}Corde{% endblock %}
+{% block title %}EPI{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -23,13 +23,28 @@
 					</div>
 					<div class="card-action">
 						<form method="post">
+							<button type="submit" name="visit-stockage" id="visit-stockage" class="btn-large light-blue darken-2">
+								<i class="material-icons left">storage</i>Voir le stockage
+							</button>
 							<div class="row">
-								<button type="submit" name="visit-stockage" id="visit-stockage" class="btn-large light-blue darken-2">
-									<i class="material-icons left">storage</i>Voir le stockage
-								</button>
-								<button type="submit" name="change-stockage" id="change-stockage" class="btn-large light-blue darken-2">
-									<i class="material-icons left">transfer_within_a_station</i>Déplacer
-								</button>
+								<div class="col s12 m6 l8 offset-m3 offset-l2">
+									<p>
+										<ul class="collapsible">
+											<li>
+												<div class="collapsible-header light-blue darken-2 white-text">
+													<i class="material-icons left">transfer_within_a_station</i>DÉPLACER
+												</div>
+												<div class="collapsible-body">
+													<form method="post">
+														{% from "pages/_formhelpers.html" import render_field %}
+														{{ render_field(form.stockage) }}
+														<p><input type=submit value="Déplacer" class="btn-large light-blue darken-2"></p>
+													</form>
+												</div>
+											</li>
+										</ul>
+									</p>
+								</div>
 							</div>
 						</form>
 					</div>
@@ -87,5 +102,16 @@
 </div>
 
 </div>
-</div>
+{% endblock %}
+
+
+
+{% block scripts %}
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function() {
+		var elems = document.querySelectorAll('.collapsible');
+		console.log("Hello");
+		var instances = M.Collapsible.init(elems, {accordion: true});
+	});
+</script>
 {% endblock %}

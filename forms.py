@@ -30,9 +30,17 @@ class AjoutMateriel(Form):
         query_factory=lambda: Stockage.query,
         get_label="sto_name",
     )
-    date_fabrication = DateField("Date de fabrication")
+    date_fabrication = DateField("Date de fabrication", [validators.optional()])
     date_utilisation = DateField("Date de mise en service")
     duree_vie = IntegerField("Durée de vie (en années)", [validators.optional()])
+
+class Deplacement(Form):
+    stockage = QuerySelectField(
+        "Déplacer vers",
+        [validators.DataRequired()],
+        query_factory=lambda: Stockage.query,
+        get_label="sto_name",
+    )
 
 
 class RebutForm(Form):
