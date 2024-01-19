@@ -1,6 +1,6 @@
 {% extends 'pages/base.html' %}
 
-{% block title %}Ajout de matériel{% endblock %}
+{% block title %}Ajout de corde{% endblock %}
 {% block content %}
 <div class="container">
 	<div class="row">
@@ -10,10 +10,29 @@
 		</div>
 	</div>
 	<div class="center addbox">
-		<h3>Ajout de matériel</h3>
-		<a href="/ajout/corde" class="btn-large light-blue darken-2">
-			<i class="material-icons left">gesture</i>Corde
-		</a>
+		<h3>Informations</h3>
+		{% from "pages/_formhelpers.html" import render_field %}
+		<form method=post>
+			<dl>
+				{{ render_field(form.genre) }}
+				{{ render_field(form.ftype) }}
+				{{ render_field(form.marque) }}
+				{{ render_field(form.modele) }}
+				{{ render_field(form.quantite) }}
+				{{ render_field(form.marquage) }}
+				{{ render_field(form.stockage) }}
+				<div class="row">
+					<div class="col s12 m6 l6">
+						{{ render_field(form.date_fabrication) }}
+					</div>
+					<div class="col s12 m6 l6">
+						{{ render_field(form.date_utilisation) }}
+					</div>
+				</div>
+				{{ render_field(form.duree_vie) }}
+			</dl>
+			<p><input type=submit value="Ajouter" class="btn-large light-blue darken-2"></p>
+		</form>
 	</div>
 </div>
 {% endblock %}
