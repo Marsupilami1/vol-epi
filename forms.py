@@ -10,38 +10,41 @@ from wtforms import (
 )
 from wtforms_sqlalchemy.fields import QuerySelectField
 from datetime import date
-from models import Genre, Stockage
+from models import Kind, Storage
 
 
-class AjoutMateriel(Form):
-    genre = QuerySelectField(
-        "Genre", query_factory=lambda: Genre.query, get_label="gen_name"
+class AddEPI(Form):
+    kind = QuerySelectField(
+        "Genre", query_factory=lambda: Kind.query, get_label="kin_name"
     )
     ftype = StringField("Type", [validators.Length(max=20)])
-    marque = StringField(
+    brand = StringField(
         "Marque", [validators.DataRequired(), validators.Length(max=20)]
     )
-    modele = StringField("Modèle", [validators.Length(max=50)])
-    quantite = IntegerField("Quantité/Nombre", [validators.NumberRange(min=0)])
-    marquage = StringField("Signe distinctif/Marquage", [validators.Length(max=100)])
-    stockage = QuerySelectField(
+    product_name = StringField(
+        "Modèle et/ou Numéro de série", [validators.Length(max=50)]
+    )
+    amount = IntegerField("Quantité/Nombre", [validators.NumberRange(min=0)])
+    marking = StringField("Signe distinctif/Marquage", [validators.Length(max=100)])
+    storage = QuerySelectField(
         "Stockage",
         [validators.DataRequired()],
-        query_factory=lambda: Stockage.query,
+        query_factory=lambda: Storage.query,
         get_label="sto_name",
     )
-    date_fabrication = DateField("Date de fabrication", [validators.optional()])
-    date_utilisation = DateField("Date de mise en service")
-    duree_vie = IntegerField("Durée de vie (en années)", [validators.optional()])
+    manufacturing_date = DateField("Date de fabrication", [validators.optional()])
+    first_use_date = DateField("Date de mise en service")
+    life_time = IntegerField("Durée de vie (en années)", [validators.optional()])
 
-class Deplacement(Form):
-    stockage = QuerySelectField(
+
+class Move(Form):
+    storage = QuerySelectField(
         "Déplacer vers",
         [validators.DataRequired()],
-        query_factory=lambda: Stockage.query,
+        query_factory=lambda: Storage.query,
         get_label="sto_name",
     )
 
 
-class RebutForm(Form):
+class WasteForm(Form):
     submit = SubmitField("Mettre au rebut")

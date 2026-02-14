@@ -1,0 +1,91 @@
+{% extends 'pages/base.html' %} {% block title %}Recherche par type{% endblock
+%} {% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col s12 m6 l3">
+      <a href="/" class="waves-effect waves-light btn light-blue darken-2">
+        <i class="material-icons left">arrow_back</i>Retour</a
+      >
+    </div>
+    <div class="col s12 m6 l3 right">
+      <div class="right">
+        <a
+          href="/ajout"
+          class="waves-effect waves-light btn light-blue darken-2"
+        >
+          <i class="material-icons left">add</i>Ajouter</a
+        >
+      </div>
+    </div>
+  </div>
+  <div class="center addbox">
+    <h1>Liste du matériel</h1>
+    <ul class="collapsible">
+      {% for epis in data_by_kind %} {% if epis.epis != [] %}
+      <li>
+        <div class="collapsible-header">
+          <h4><i class="material-icons">arrow_drop_down</i>{{ epis.kind }}</h4>
+        </div>
+        <div class="collapsible-body">
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Marque</th>
+                <th>Modèle</th>
+                <th>Quantité</th>
+                <th>Marquage</th>
+                <th>Stockage</th>
+                <th>Fin de vie</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for epi in epis.epis %} {% if not epi.discarded %}
+              <tr>
+                <td>{{epi.type}}</td>
+                <td>{{epi.brand}}</td>
+                <td>{{epi.product_name}}</td>
+                <td>{{epi.count}}</td>
+                <td>{{epi.marking}}</td>
+                <td>{{epi.storage}}</td>
+                <td>
+                  <b>
+                    {% if epi.end_of_life != None %} {% if epi.urgency ==
+                    "critical" %}
+                    <div class="red-text">{{ epi.end_of_life }}</div>
+                    {% endif %} {% if epi.urgency == "worrying" %}
+                    <div class="orange-text">{{ epi.end_of_life }}</div>
+                    {% endif %} {% if epi.urgency == "all good" %}
+                    <div class="green-text">{{ epi.end_of_life }}</div>
+                    {% endif %} {% else %}
+                    <div class="green-text">Indéfinie</div>
+                    {% endif %}
+                  </b>
+                </td>
+                <td>
+                  <a
+                    href="/epi/{{epi.id}}"
+                    class="btn-floating btn-small light-blue darken-2"
+                  >
+                    <i class="material-icons">search</i>
+                  </a>
+                </td>
+              </tr>
+              {% endif %} {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </li>
+      {% endif %} {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    var elems = document.querySelectorAll(".collapsible");
+    console.log("Hello");
+    var instances = M.Collapsible.init(elems, { accordion: false });
+  });
+</script>
+{% endblock %}

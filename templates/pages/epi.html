@@ -6,24 +6,24 @@
 <div class="container">
 	<div class="row">
 		<div class="col s6 m6 l3">
-			<a href="/recherche/genre" class="waves-effect waves-light btn light-blue darken-2">
+			<a href="/search/kind" class="waves-effect waves-light btn light-blue darken-2">
 				<i class="material-icons left">arrow_back</i>Retour</a>
 		</div>
 	</div>
 	<div class="center addbox">
-		<h1>{{marque}}: {{modele}} {{marquage}}</h1>
+		<h1>{{brand}}: {{product_name}} {{marking}}</h1>
 
 		<div class="row">
-			<!-- STOCKAGE -->
-			{% if not has_rebut_date %}
+			<!-- STORAGE -->
+			{% if not discarded %}
 			<div class="col s12 m12 l6 left">
 				<div class="card">
 					<div class="card-content">
-						<span class="card-title"><b>Stockage: {{ stockage }}</b></span>
+						<span class="card-title"><b>Stockage: {{ storage }}</b></span>
 					</div>
 					<div class="card-action">
 						<form method="post">
-							<button type="submit" name="visit-stockage" id="visit-stockage" class="btn-large light-blue darken-2">
+							<button type="submit" name="visit-storage" id="visit-storage" class="btn-large light-blue darken-2">
 								<i class="material-icons left">storage</i>Voir le stockage
 							</button>
 							<div class="row">
@@ -37,7 +37,7 @@
 												<div class="collapsible-body">
 													<form method="post">
 														{% from "pages/_formhelpers.html" import render_field %}
-														{{ render_field(form.stockage) }}
+														{{ render_field(form.storage) }}
 														<p><input type=submit value="Déplacer" class="btn-large light-blue darken-2"></p>
 													</form>
 												</div>
@@ -81,14 +81,14 @@
 						</table>
 						{% endif %}
 					</div>
-					{% if not has_rebut_date %}
+					{% if not discarded %}
 					<div class="card-action">
 						<form method="post">
 							<div class="row">
-								<button type="submit" name="controle" id="controle" class="btn-large light-green darken-2">
+								<button type="submit" name="control" id="control" class="btn-large light-green darken-2">
 									<i class="material-icons left">check</i>Valider l'état
 								</button>
-								<button type="submit" name="rebut" id="rebut" class="btn-large red lighten-2">
+								<button type="submit" name="discard" id="discard" class="btn-large red lighten-2">
 									<i class="material-icons left">delete</i>Mettre au rebut
 								</button>
 							</div>
@@ -110,7 +110,6 @@
 <script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', function() {
 		var elems = document.querySelectorAll('.collapsible');
-		console.log("Hello");
 		var instances = M.Collapsible.init(elems, {accordion: true});
 	});
 </script>
