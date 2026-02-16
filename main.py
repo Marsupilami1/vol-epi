@@ -59,7 +59,7 @@ def home():
     return render_template("pages/index.html")
 
 
-@app.route("/ajout", methods=["GET", "POST"])
+@app.route("/add", methods=["GET", "POST"])
 def ajout():
     form = forms.AddEPI(request.form)
     if request.method == "POST" and form.validate():
@@ -86,7 +86,7 @@ def ajout():
         db.session.add(controle)
         db.session.commit()
         return redirect(f"/epi/{epi.epi_id}")
-    return render_template("pages/ajout.html", form=form)
+    return render_template("pages/add.html", form=form)
 
 
 @app.route("/search/kind")
